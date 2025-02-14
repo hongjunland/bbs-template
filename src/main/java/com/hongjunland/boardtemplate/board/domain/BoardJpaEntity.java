@@ -1,5 +1,6 @@
 package com.hongjunland.boardtemplate.board.domain;
 
+import com.hongjunland.boardtemplate.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
-public class BoardJpaEntity {
+public class BoardJpaEntity extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

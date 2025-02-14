@@ -45,12 +45,13 @@ public class PostServiceTest {
                 .description("공지사항 게시판")
                 .build();
 
-        post = new PostJpaEntity(
-                board,
-                "첫 번째 게시글",
-                "내용입니다.",
-                "홍길동"
-        );
+        post = PostJpaEntity.builder()
+                .id(1L)
+                .board(board)
+                .title("첫 번째 게시글")
+                .content("내용입니다.")
+                .author("홍길동")
+                .build();
     }
 
     @Test
@@ -81,8 +82,12 @@ public class PostServiceTest {
     @Test
     void 존재하지_않는_게시판에_게시글_작성_테스트() {
         // given
-        PostRequest request = new PostRequest(999L, "제목", "내용", "홍길동");
-
+        PostRequest request = PostRequest.builder()
+                .boardId(999L)
+                .title("제목")
+                .content("내용")
+                .author("홍길동")
+                .build();
         when(boardJpaRepository.findById(request.boardId())).thenReturn(Optional.empty());
 
         // when & then
@@ -92,6 +97,7 @@ public class PostServiceTest {
     @Test
     void 게시글_목록_조회_테스트() {
         // given
+        when(boardJpaRepository.existsById(1L)).thenReturn(true);
         when(postJpaRepository.findByBoardId(1L)).thenReturn(List.of(post));
 
         // when
@@ -132,8 +138,12 @@ public class PostServiceTest {
     @Test
     void 게시글_수정_테스트() {
         // given
-        PostRequest request = new PostRequest(1L, "수정된 제목", "수정된 내용", "홍길동");
-
+        PostRequest request = PostRequest.builder()
+                .boardId(1L)
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .author("홍길동")
+                .build();
         when(postJpaRepository.findById(1L)).thenReturn(Optional.of(post));
 
         // when
@@ -147,7 +157,12 @@ public class PostServiceTest {
     @Test
     void 존재하지_않는_게시글_수정_테스트() {
         // given
-        PostRequest request = new PostRequest(1L, "수정된 제목", "수정된 내용", "홍길동");
+        PostRequest request = PostRequest.builder()
+                .boardId(1L)
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .author("홍길동")
+                .build();
 
         when(postJpaRepository.findById(999L)).thenReturn(Optional.empty());
 

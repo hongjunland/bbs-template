@@ -1,7 +1,8 @@
-package com.hongjunland.boardtemplate.post.domain;
+package com.hongjunland.boardtemplate.comment.domain;
 
-import com.hongjunland.boardtemplate.board.domain.BoardJpaEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hongjunland.boardtemplate.common.domain.BaseTimeEntity;
+import com.hongjunland.boardtemplate.post.domain.PostJpaEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,26 +10,25 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "posts")
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostJpaEntity extends BaseTimeEntity {
+@Builder
+public class CommentJpaEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private BoardJpaEntity board;
+    @JoinColumn(name = "post_id", nullable = false)
+    @JsonIgnore
+    private PostJpaEntity post;
 
-    private String title;
-    private String content;
     private String author;
+    private String content;
 
-    public void update(String title, String content) {
-        this.title = title;
+    public void update(String content) {
         this.content = content;
     }
 }
+

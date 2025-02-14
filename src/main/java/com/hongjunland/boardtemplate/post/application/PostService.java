@@ -24,12 +24,13 @@ public class PostService {
         BoardJpaEntity board = boardJpaRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
 
-        PostJpaEntity post = postJpaRepository.save(new PostJpaEntity(
-                board,
-                request.title(),
-                request.content(),
-                request.author()
-        ));
+        PostJpaEntity post = postJpaRepository.save(PostJpaEntity.builder()
+                .board(board)
+                .title(request.title())
+                .content(request.content())
+                .author(request.author())
+                .build()
+        );
         return PostResponse.builder()
                 .id(post.getId())
                 .boardId(post.getBoard().getId())
@@ -44,9 +45,9 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<PostResponse> getPostsByBoardId(Long boardId) {
-        boardJpaRepository.findById(boardId).orElseThrow(
-                () -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다")
-        );
+        if(!boardJpaRepository.existsById(boardId)){
+            throw new EntityNotFoundException("해당 게시판이 존재하지 않습니다");
+        }
         return postJpaRepository.findByBoardId(boardId)
                 .stream()
                 .map((entity) ->
