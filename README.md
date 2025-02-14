@@ -7,18 +7,18 @@ Spring Boot와 JPA를 기반으로 개발되었으며, **JWT 인증, 검색, 정
 ---
 
 ## 📌 1️⃣ 기술 스택
-| 분류 | 기술 |
-|------|------|
-| **Backend** | Spring Boot, Spring Data JPA, Spring Security |
-| **Database** | MySQL, PostgreSQL |
-| **Authentication** | JWT (Json Web Token), OAuth2 (Google, GitHub) |
-| **Cache** | Redis (조회수, 인기순 정렬) |
-| **Search** | ElasticSearch (게시글 검색) |
-| **Logging** | SLF4J, Logback |
-| **File Upload** | Amazon S3, Local Storage |
-| **API Documentation** | Swagger, Spring REST Docs |
-| **Testing** | JUnit, Mockito |
-| **Deployment** | Docker, GitHub Actions (CI/CD) |
+| 분류 | 기술                                             |
+|------|------------------------------------------------|
+| **Backend** | Spring Boot, Spring Data JPA, Spring Security  |
+| **Database** | PostgreSQL                                     |
+| **Authentication** | JWT (Json Web Token), OAuth2 (Google, GitHub)  |
+| **Cache** | Redis (조회수, 인기순 정렬)                            |
+| **Search** | ElasticSearch (게시글 검색)                         |
+| **Logging** | SLF4J, Logback                                 |
+| **File Upload** | Amazon S3(Google Cloud Storage), Local Storage |
+| **API Documentation** | Swagger, Spring REST Docs                      |
+| **Testing** | JUnit, Mockito                                 |
+| **Deployment** | Docker, GitHub Actions (CI/CD)                 |
 
 ---
 
