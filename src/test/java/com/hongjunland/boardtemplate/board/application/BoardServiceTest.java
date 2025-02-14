@@ -161,7 +161,7 @@ public class BoardServiceTest {
                 () -> boardService.updateBoard(boardId, request)
         );
 
-        assertEquals("게시판을 찾을 수 없습니다.", thrown.getMessage());
+        assertEquals("해당 게시판이 존재하지 않습니다.", thrown.getMessage());
     }
 
 

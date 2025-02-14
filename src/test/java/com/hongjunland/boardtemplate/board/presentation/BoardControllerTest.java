@@ -55,10 +55,11 @@ public class BoardControllerTest {
         mockMvc.perform(post("/api/v1/boards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.boardId").value(response.boardId()))
-                .andExpect(jsonPath("$.name").value(response.name()))
-                .andExpect(jsonPath("$.description").value(response.description()));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공적으로 처리되었습니다."))
+                .andExpect(jsonPath("$.data.boardId").value(response.boardId()))
+                .andExpect(jsonPath("$.data.name").value(response.name()))
+                .andExpect(jsonPath("$.data.description").value(response.description()));
     }
 
     @Test
@@ -73,7 +74,9 @@ public class BoardControllerTest {
         mockMvc.perform(post("/api/v1/boards")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -89,15 +92,17 @@ public class BoardControllerTest {
         // when & then
         mockMvc.perform(get("/api/v1/boards"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(responses.size()))
-                .andExpect(jsonPath("$[0].boardId").value(responses.get(0).boardId()))
-                .andExpect(jsonPath("$[1].boardId").value(responses.get(1).boardId()));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공적으로 처리되었습니다."))
+                .andExpect(jsonPath("$.data.size()").value(responses.size()))
+                .andExpect(jsonPath("$.data[0].boardId").value(responses.get(0).boardId()))
+                .andExpect(jsonPath("$.data[1].boardId").value(responses.get(1).boardId()));
     }
 
     @Test
     public void 게시판_단일_조회_테스트() throws Exception {
         // given
-        Long boardId = 1L;
+        Long boardId = 999L;
         BoardResponse response = BoardResponse.builder()
                 .boardId(boardId)
                 .name("공지사항")
@@ -109,20 +114,25 @@ public class BoardControllerTest {
         // when & then
         mockMvc.perform(get("/api/v1/boards/{boardId}", boardId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.boardId").value(response.boardId()))
-                .andExpect(jsonPath("$.name").value(response.name()))
-                .andExpect(jsonPath("$.description").value(response.description()));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공적으로 처리되었습니다."))
+                .andExpect(jsonPath("$.data.boardId").value(response.boardId()))
+                .andExpect(jsonPath("$.data.name").value(response.name()))
+                .andExpect(jsonPath("$.data.description").value(response.description()));
     }
 
     @Test
     public void 존재하지_않는_게시판_조회_테스트() throws Exception {
         // given
         Long boardId = 999L;
-        when(boardService.getBoardById(boardId)).thenThrow(new EntityNotFoundException("게시판을 찾을 수 없습니다."));
+        when(boardService.getBoardById(boardId)).thenThrow(new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
 
         // when & then
+        // when & then
         mockMvc.perform(get("/api/v1/boards/{boardId}", boardId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("해당 게시판이 존재하지 않습니다."));
     }
 
     @Test
@@ -147,9 +157,11 @@ public class BoardControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.boardId").value(response.boardId()))
-                .andExpect(jsonPath("$.name").value(response.name()))
-                .andExpect(jsonPath("$.description").value(response.description()));
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("요청이 성공적으로 처리되었습니다."))
+                .andExpect(jsonPath("$.data.boardId").value(response.boardId()))
+                .andExpect(jsonPath("$.data.name").value(response.name()))
+                .andExpect(jsonPath("$.data.description").value(response.description()));
     }
 
     @Test
@@ -161,11 +173,16 @@ public class BoardControllerTest {
                 .description("수정된 공지사항 게시판")
                 .build();
 
-        when(boardService.updateBoard(boardId, request)).thenThrow(new EntityNotFoundException("게시판을 찾을 수 없습니다."));
+        doThrow(new EntityNotFoundException("해당 게시판이 존재하지 않습니다."))
+                .when(boardService).updateBoard(boardId, request);
 
         // when & then
-        mockMvc.perform(put("/api/v1/boards/{boardId}", boardId))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(put("/api/v1/boards/{boardId}", boardId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("해당 게시판이 존재하지 않습니다."));
     }
 
     @Test
@@ -176,19 +193,21 @@ public class BoardControllerTest {
 
         // when & then
         mockMvc.perform(delete("/api/v1/boards/{boardId}", boardId))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isNoContent()); // 204 No Content 반환
     }
 
-//    @Test
-//    public void 존재하지_않는_게시판_삭제_테스트() throws Exception {
-//        // given
-//        Long boardId = 999L; // 존재하지 않는 ID
-//        doThrow(new EntityNotFoundException("해당 게시판을 찾을 수 없습니다."))
-//                .when(boardService).deleteBoard(boardId);
-//
-//        // when & then
-//        mockMvc.perform(delete("/api/v1/boards/{boardId}", boardId));
-//                .andExpect(status().isInternalServerError()); // ✅ 500 Internal Server Error 예상
-//    }
+    @Test
+    public void 존재하지_않는_게시판_삭제_테스트() throws Exception {
+        // given
+        Long boardId = 999L; // 존재하지 않는 ID
+        doThrow(new EntityNotFoundException("해당 게시판이 존재하지 않습니다."))
+                .when(boardService).deleteBoard(boardId);
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/boards/{boardId}", boardId))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("해당 게시판이 존재하지 않습니다."));
+    }
 
 }

@@ -54,7 +54,7 @@ public class BoardService {
     @Transactional
     public void deleteBoard(Long boardId) {
         if (!boardJpaRepository.existsById(boardId)) {
-            throw new EntityNotFoundException("게시판을 찾을 수 없습니다.");
+            throw new EntityNotFoundException("해당 게시판이 존재하지 않습니다.");
         }
         boardJpaRepository.deleteById(boardId);
     }
@@ -62,7 +62,7 @@ public class BoardService {
     @Transactional
     public BoardResponse updateBoard(Long boardId, BoardRequest request) {
         BoardJpaEntity board = boardJpaRepository.findById(boardId)
-                .orElseThrow(() -> new EntityNotFoundException("게시판을 찾을 수 없습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
         board.update(request.name(), request.description());
         return new BoardResponse(board.getId(), board.getName(), board.getDescription());
     }
