@@ -32,8 +32,7 @@ public class Post extends BaseTimeEntity {
 
     // Post 애그리게이트 내부에서 관리하는 자식(하위) 구성 요소: 댓글
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
-
+    private final List<Comment> comments = new ArrayList<>();
 
     public void update(String title, String content) {
         this.title = title;

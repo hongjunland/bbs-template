@@ -14,10 +14,9 @@ import com.hongjunland.bbstemplate.post.domain.Comment;
 import com.hongjunland.bbstemplate.post.dto.CommentRequest;
 import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
-import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.post.PostJpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -125,10 +124,9 @@ public class CommentService {
         Comment comment = commentJpaRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
 
-        Optional<CommentLike> existingLike = commentLikeJpaRepository.findByCommentAndUser(comment, user);
-
-        if (existingLike.isPresent()) {
-            commentLikeJpaRepository.delete(existingLike.get()); // 좋아요 취소
+        boolean existLike = commentLikeJpaRepository.existsByCommentAndUser(comment, user);
+        if (existLike) {
+            commentLikeJpaRepository.deleteCommentLikeByCommentIdAndUserId(commentId, userId); // 좋아요 취소
             return false;
         } else {
             commentLikeJpaRepository.save(CommentLike.builder()

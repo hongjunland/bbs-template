@@ -1,4 +1,4 @@
-package com.hongjunland.bbstemplate.post.infrastructure;
+package com.hongjunland.bbstemplate.post.infrastructure.post;
 
 import com.hongjunland.bbstemplate.post.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
