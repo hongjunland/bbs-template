@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hongjunland.bbstemplate.board.application.BoardService;
-import com.hongjunland.bbstemplate.board.domain.BoardJpaEntity;
+import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.dto.BoardRequest;
 import com.hongjunland.bbstemplate.board.dto.BoardResponse;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
@@ -35,9 +35,9 @@ public class BoardServiceTest {
         String description = "공지사항 게시판";
         BoardRequest request = new BoardRequest(name, description);
 
-        when(boardJpaRepository.save(any(BoardJpaEntity.class)))
+        when(boardJpaRepository.save(any(Board.class)))
                 .thenReturn(
-                        BoardJpaEntity.builder()
+                        Board.builder()
                                 .id(1L)
                                 .name(request.name())
                                 .description(request.description())
@@ -58,14 +58,14 @@ public class BoardServiceTest {
         Long boardId = 1L;
         String name = "공지사항";
         String description = "공지사항 게시판";
-        BoardJpaEntity boardJpaEntity =
-                BoardJpaEntity.builder()
+        Board Board =
+                Board.builder()
                         .id(boardId)
                         .name(name)
                         .description(description)
                         .build();
 
-        when(boardJpaRepository.findById(boardId)).thenReturn(Optional.of(boardJpaEntity));
+        when(boardJpaRepository.findById(boardId)).thenReturn(Optional.of(Board));
 
         // when
         BoardResponse response = boardService.getBoardById(boardId);
@@ -94,13 +94,13 @@ public class BoardServiceTest {
     @Test
     public void 모든_게시판_조회_테스트() {
         // given
-        List<BoardJpaEntity> boards = List.of(
-                BoardJpaEntity.builder()
+        List<Board> boards = List.of(
+                Board.builder()
                         .id(1L)
                         .name("공지사항")
                         .description("공지사항 게시판")
                         .build(),
-                BoardJpaEntity.builder()
+                Board.builder()
                         .id(2L)
                         .name("자유게시판")
                         .description("자유롭게 대화하는 게시판")
@@ -128,7 +128,7 @@ public class BoardServiceTest {
                 .description("변경된 공지사항 게시판")
                 .build();
 
-        BoardJpaEntity existingBoard = BoardJpaEntity.builder()
+        Board existingBoard = Board.builder()
                 .id(boardId)
                 .name("공지사항")
                 .description("공지사항 게시판")

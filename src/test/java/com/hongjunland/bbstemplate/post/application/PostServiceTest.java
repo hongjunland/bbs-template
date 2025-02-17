@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.hongjunland.bbstemplate.board.domain.BoardJpaEntity;
+import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
 import com.hongjunland.bbstemplate.post.application.PostService;
 import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
@@ -36,12 +36,12 @@ public class PostServiceTest {
     @InjectMocks
     private PostService postService;
 
-    private BoardJpaEntity board;
+    private Board board;
     private PostJpaEntity post;
 
     @BeforeEach
     void setup() {
-        board = BoardJpaEntity.builder()
+        board = Board.builder()
                 .id(1L)
                 .name("공지사항")
                 .description("공지사항 게시판")

@@ -12,9 +12,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
-public class BoardJpaEntity extends BaseTimeEntity {
+public class Board extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -26,5 +26,17 @@ public class BoardJpaEntity extends BaseTimeEntity {
     public void update(String name, String description){
         this.name = name;
         this.description = description;
+    }
+
+    /**
+     * 게시판 생성 정적 팩토리 메서드
+     */
+    @Builder
+    public static Board create(String name, String description) {
+        // 유효성 검증 등 도메인 규칙 추가 가능
+        return Board.builder()
+                .name(name)
+                .description(description)
+                .build();
     }
 }

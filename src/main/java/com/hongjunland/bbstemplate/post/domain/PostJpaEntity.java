@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-import com.hongjunland.bbstemplate.board.domain.BoardJpaEntity;
+import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.common.domain.BaseTimeEntity;
 
 @Entity
@@ -22,7 +22,7 @@ public class PostJpaEntity extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
-    private BoardJpaEntity board;
+    private Board board;
 
     private String title;
     private String content;

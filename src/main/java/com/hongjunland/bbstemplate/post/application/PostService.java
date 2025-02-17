@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hongjunland.bbstemplate.board.domain.BoardJpaEntity;
+import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
 import com.hongjunland.bbstemplate.post.dto.PostRequest;
@@ -31,7 +31,7 @@ public class PostService {
 
     @Transactional
     public PostResponse createPost(Long boardId, PostRequest request) {
-        BoardJpaEntity board = boardJpaRepository.findById(boardId)
+        Board board = boardJpaRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
 
         PostJpaEntity post = postJpaRepository.save(PostJpaEntity.builder()
