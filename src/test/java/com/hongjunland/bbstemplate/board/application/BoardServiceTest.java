@@ -58,14 +58,14 @@ public class BoardServiceTest {
         Long boardId = 1L;
         String name = "공지사항";
         String description = "공지사항 게시판";
-        Board Board =
+        Board board =
                 Board.builder()
                         .id(boardId)
                         .name(name)
                         .description(description)
                         .build();
 
-        when(boardJpaRepository.findById(boardId)).thenReturn(Optional.of(Board));
+        when(boardJpaRepository.findById(boardId)).thenReturn(Optional.of(board));
 
         // when
         BoardResponse response = boardService.getBoardById(boardId);
@@ -165,9 +165,6 @@ public class BoardServiceTest {
 
         assertEquals("해당 게시판이 존재하지 않습니다.", thrown.getMessage());
     }
-
-
-
 
 
     @Test

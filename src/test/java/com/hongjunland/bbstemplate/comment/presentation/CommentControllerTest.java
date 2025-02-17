@@ -1,19 +1,18 @@
 package com.hongjunland.bbstemplate.comment.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hongjunland.bbstemplate.comment.application.CommentService;
-import com.hongjunland.bbstemplate.comment.dto.CommentRequest;
-import com.hongjunland.bbstemplate.comment.dto.CommentResponse;
+import com.hongjunland.bbstemplate.post.application.CommentService;
+import com.hongjunland.bbstemplate.post.dto.CommentRequest;
+import com.hongjunland.bbstemplate.post.dto.CommentResponse;
+import com.hongjunland.bbstemplate.post.presentation.CommentController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;

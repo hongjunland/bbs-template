@@ -1,6 +1,6 @@
-package com.hongjunland.bbstemplate.comment.domain;
+package com.hongjunland.bbstemplate.post.domain;
 
-import com.hongjunland.bbstemplate.user.domain.UserJpaEntity;
+import com.hongjunland.bbstemplate.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import lombok.*;
 @Table(name = "comment_likes", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"comment_id", "user_id"}) // ✅ 한 사용자가 한 댓글에 한 번만 좋아요 가능
 })
-public class CommentLikeJpaEntity {
+public class CommentLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +20,10 @@ public class CommentLikeJpaEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id", nullable = false)
-    private CommentJpaEntity comment;
+    private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserJpaEntity user;
+    private User user;
 
 }

@@ -1,8 +1,8 @@
-package com.hongjunland.bbstemplate.comment.presentation;
+package com.hongjunland.bbstemplate.post.presentation;
 
-import com.hongjunland.bbstemplate.comment.application.CommentService;
-import com.hongjunland.bbstemplate.comment.dto.CommentRequest;
-import com.hongjunland.bbstemplate.comment.dto.CommentResponse;
+import com.hongjunland.bbstemplate.post.application.CommentService;
+import com.hongjunland.bbstemplate.post.dto.CommentRequest;
+import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

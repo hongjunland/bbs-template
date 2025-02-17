@@ -17,20 +17,12 @@ import java.util.List;
 public class BoardService {
     private final BoardJpaRepository boardJpaRepository;
 
-//    @Transactional
-//    public BoardResponse createBoard(BoardRequest request) {
-//        Board board = boardJpaRepository.save(
-//                Board.builder()
-//                        .name(request.name())
-//                        .description(request.description())
-//                        .build()
-//        );
-//        return new BoardResponse(board.getId(), board.getName(), board.getDescription());
-//    }
     @Transactional
     public BoardResponse createBoard(BoardRequest request) {
-        Board board = Board.create(request.name(), request.description());
-        boardJpaRepository.save(board);
+        Board board = boardJpaRepository.save(Board.builder()
+                .name(request.name())
+                .description(request.description())
+                .build());
         return BoardResponse.builder()
                 .boardId(board.getId())
                 .name(board.getName())
@@ -41,17 +33,16 @@ public class BoardService {
     public BoardResponse getBoardById(Long boardId) {
         Board Board = boardJpaRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
-        BoardResponse boardResponse = BoardResponse.builder()
+        return BoardResponse.builder()
                 .boardId(Board.getId())
                 .name(Board.getName())
                 .description(Board.getDescription())
                 .build();
-        return boardResponse;
     }
 
     public List<BoardResponse> getAllBoards() {
         List<Board> BoardList = boardJpaRepository.findAll();
-        List<BoardResponse> responseList = BoardList.stream()
+        return BoardList.stream()
                 .map((entity) ->
                         BoardResponse.builder()
                                 .boardId(entity.getId())
@@ -60,8 +51,8 @@ public class BoardService {
                                 .build()
                 )
                 .toList();
-        return responseList;
     }
+
     @Transactional
     public void deleteBoard(Long boardId) {
         if (!boardJpaRepository.existsById(boardId)) {
@@ -75,6 +66,9 @@ public class BoardService {
         Board board = boardJpaRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
         board.update(request.name(), request.description());
-        return new BoardResponse(board.getId(), board.getName(), board.getDescription());
+        return BoardResponse.builder().boardId(board.getId())
+                .name(board.getName())
+                .description(board.getDescription())
+                .build();
     }
 }

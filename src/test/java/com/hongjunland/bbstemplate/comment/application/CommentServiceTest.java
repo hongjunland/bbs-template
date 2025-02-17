@@ -1,8 +1,9 @@
 package com.hongjunland.bbstemplate.comment.application;
 
+import com.hongjunland.bbstemplate.post.application.CommentService;
+import com.hongjunland.bbstemplate.post.domain.Post;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,12 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.hongjunland.bbstemplate.comment.application.CommentService;
-import com.hongjunland.bbstemplate.comment.domain.CommentJpaEntity;
-import com.hongjunland.bbstemplate.comment.dto.CommentRequest;
-import com.hongjunland.bbstemplate.comment.dto.CommentResponse;
-import com.hongjunland.bbstemplate.comment.infrastructure.CommentJpaRepository;
-import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
+import com.hongjunland.bbstemplate.post.domain.Comment;
+import com.hongjunland.bbstemplate.post.dto.CommentRequest;
+import com.hongjunland.bbstemplate.post.dto.CommentResponse;
+import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
 
 import java.util.List;
@@ -41,19 +40,19 @@ public class CommentServiceTest {
     @Mock
     private EntityManager entityManager;
 
-    private PostJpaEntity post;
-    private CommentJpaEntity comment;
+    private Post post;
+    private Comment comment;
 
     @BeforeEach
     void setup() {
-        post = PostJpaEntity.builder()
+        post = Post.builder()
                 .id(1L)
                 .title("게시글 제목")
                 .content("게시글 내용")
                 .author("작성자")
                 .build();
 
-        comment = CommentJpaEntity.builder()
+        comment = Comment.builder()
                 .id(1L)
                 .post(post)
                 .author("댓글 작성자")
@@ -73,7 +72,7 @@ public class CommentServiceTest {
                 .build();
 
         when(postJpaRepository.findById(post.getId())).thenReturn(Optional.of(post));
-        when(commentJpaRepository.save(any(CommentJpaEntity.class))).thenReturn(comment);
+        when(commentJpaRepository.save(any(Comment.class))).thenReturn(comment);
 
         // when
         CommentResponse response = commentService.createComment(post.getId(), request);
@@ -134,7 +133,7 @@ public class CommentServiceTest {
                 .author("댓글 작성자")
                 .content("수정된 내용")
                 .build();
-        CommentJpaEntity updateComment = CommentJpaEntity.builder()
+        Comment updateComment = Comment.builder()
                 .id(1L)
                 .post(post)
                 .author("댓글 작성자")
@@ -158,7 +157,7 @@ public class CommentServiceTest {
                 .author("댓글 작성자")
                 .content("수정된 내용")
                 .build();
-        CommentJpaEntity updateComment = CommentJpaEntity.builder()
+        Comment updateComment = Comment.builder()
                 .id(1L)
                 .post(post)
                 .author("댓글 작성자")

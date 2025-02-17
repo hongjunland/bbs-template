@@ -1,18 +1,16 @@
 package com.hongjunland.bbstemplate.post.infrastructure;
 
-import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
-import com.hongjunland.bbstemplate.post.domain.PostLikeJpaEntity;
-import com.hongjunland.bbstemplate.user.domain.UserJpaEntity;
+import com.hongjunland.bbstemplate.post.domain.Post;
+import com.hongjunland.bbstemplate.post.domain.PostLike;
+import com.hongjunland.bbstemplate.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface PostLikeJpaRepository extends JpaRepository<PostLikeJpaEntity, Long> {
-    Optional<PostLikeJpaEntity> findByPostAndUser(PostJpaEntity post, UserJpaEntity user);
-    boolean existsByPostAndUser(PostJpaEntity post, UserJpaEntity user);
-    void deleteByPostAndUser(PostJpaEntity post, UserJpaEntity user);
+public interface PostLikeJpaRepository extends JpaRepository<PostLike, Long> {
+    Optional<PostLike> findByPostAndUser(Post post, User user);
+    boolean existsByPostAndUser(Post post, User user);
+    void deleteByPostAndUser(Post post, User user);
 
-    int countByPost(PostJpaEntity post);
+    int countByPost(Post post);
 }

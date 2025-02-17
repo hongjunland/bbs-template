@@ -1,4 +1,4 @@
-package com.hongjunland.bbstemplate.comment.dto;
+package com.hongjunland.bbstemplate.post.dto;
 
 import lombok.Builder;
 

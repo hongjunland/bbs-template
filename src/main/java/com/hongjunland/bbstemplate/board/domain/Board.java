@@ -1,9 +1,9 @@
 package com.hongjunland.bbstemplate.board.domain;
 
 import com.hongjunland.bbstemplate.common.domain.BaseTimeEntity;
-
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Entity
 @Table(name = "boards")

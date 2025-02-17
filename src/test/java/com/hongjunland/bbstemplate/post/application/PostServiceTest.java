@@ -1,5 +1,6 @@
 package com.hongjunland.bbstemplate.post.application;
 
+import com.hongjunland.bbstemplate.post.domain.Post;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
-import com.hongjunland.bbstemplate.post.application.PostService;
-import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
 import com.hongjunland.bbstemplate.post.dto.PostRequest;
 import com.hongjunland.bbstemplate.post.dto.PostResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
@@ -37,7 +36,7 @@ public class PostServiceTest {
     private PostService postService;
 
     private Board board;
-    private PostJpaEntity post;
+    private Post post;
 
     @BeforeEach
     void setup() {
@@ -47,7 +46,7 @@ public class PostServiceTest {
                 .description("공지사항 게시판")
                 .build();
 
-        post = PostJpaEntity.builder()
+        post = Post.builder()
                 .id(1L)
                 .board(board)
                 .title("첫 번째 게시글")
@@ -67,7 +66,7 @@ public class PostServiceTest {
                 .build();
 
         when(boardJpaRepository.findById(request.boardId())).thenReturn(Optional.of(board));
-        when(postJpaRepository.save(any(PostJpaEntity.class))).thenReturn(post);
+        when(postJpaRepository.save(any(Post.class))).thenReturn(post);
 
         // when
         PostResponse response = postService.createPost(1L, request);
@@ -78,7 +77,7 @@ public class PostServiceTest {
         assertThat(response.content()).isEqualTo(request.content());
         assertThat(response.author()).isEqualTo(request.author());
 
-        verify(postJpaRepository, times(1)).save(any(PostJpaEntity.class));
+        verify(postJpaRepository, times(1)).save(any(Post.class));
     }
 
     @Test
