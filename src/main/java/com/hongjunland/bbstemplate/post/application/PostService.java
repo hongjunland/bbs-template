@@ -1,5 +1,6 @@
 package com.hongjunland.bbstemplate.post.application;
 
+import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.post.domain.PostLike;
@@ -44,14 +45,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostResponse> getPostsByBoardId(Long boardId) {
-        if (!boardJpaRepository.existsById(boardId)) {
-            throw new EntityNotFoundException("해당 게시판이 존재하지 않습니다");
-        }
-        return postJpaRepository.findByBoardId(boardId)
-                .stream()
-                .map(this::toPostResponse)
-                .toList();
+    public List<PostSummaryResponse> getPostsByBoardId(Long boardId, Long userId) {
+        return postJpaRepository.findPostSummaryList(boardId, userId);
     }
 
     @Transactional(readOnly = true)
@@ -107,8 +102,8 @@ public class PostService {
      * 도메인 객체(Post)를 DTO(PostResponse)로 변환하는 매핑 메서드
      */
     private PostResponse toPostResponse(Post post) {
-        int likeCount = postLikeJpaRepository.countByPost(post);
-        int commentCount = commentJpaRepository.countCommentByPostId(post.getId());
+        long likeCount = postLikeJpaRepository.countByPost(post);
+        long commentCount = commentJpaRepository.countCommentByPostId(post.getId());
         return PostResponse.builder()
                 .id(post.getId())
                 .boardId(post.getBoard().getId())

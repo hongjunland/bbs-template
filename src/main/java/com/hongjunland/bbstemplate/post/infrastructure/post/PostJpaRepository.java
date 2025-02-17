@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PostJpaRepository extends JpaRepository<Post, Long> {
+public interface PostJpaRepository extends JpaRepository<Post, Long>, PostJpaRepositoryCustom {
     @Query("SELECT p FROM Post p JOIN FETCH p.board b WHERE b.id = :boardId")
     List<Post> findByBoardId(Long boardId);
 }

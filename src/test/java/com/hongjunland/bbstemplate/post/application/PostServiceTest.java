@@ -1,6 +1,7 @@
 package com.hongjunland.bbstemplate.post.application;
 
 import com.hongjunland.bbstemplate.post.domain.Post;
+import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ public class PostServiceTest {
 
     private Board board;
     private Post post;
+    private Long userId;
 
     @BeforeEach
     void setup() {
@@ -53,6 +55,7 @@ public class PostServiceTest {
                 .content("내용입니다.")
                 .author("홍길동")
                 .build();
+        userId = 1L;
     }
 
     @Test
@@ -102,12 +105,12 @@ public class PostServiceTest {
         when(postJpaRepository.findByBoardId(1L)).thenReturn(List.of(post));
 
         // when
-        List<PostResponse> responses = postService.getPostsByBoardId(1L);
+        List<PostSummaryResponse> responses = postService.getPostsByBoardId(1L, userId);
 
         // then
         assertThat(responses).hasSize(1);
         assertThat(responses.get(0).title()).isEqualTo(post.getTitle());
-        assertThat(responses.get(0).content()).isEqualTo(post.getContent());
+        assertThat(responses.get(0).contentSnippet()).isEqualTo(post.getContent());
     }
     @Test
     void 존재하지_않은_게시판_게시글_목록_조회_테스트() {
@@ -115,7 +118,7 @@ public class PostServiceTest {
         when(boardJpaRepository.existsById(1L)).thenReturn(false);
 
         // when & then
-        assertThrows(EntityNotFoundException.class, () -> postService.getPostsByBoardId(1L));
+        assertThrows(EntityNotFoundException.class, () -> postService.getPostsByBoardId(1L, userId));
     }
 
 

@@ -1,5 +1,6 @@
 package com.hongjunland.bbstemplate.post.presentation;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,8 @@ public class PostController {
     }
 
     @GetMapping("/boards/{boardId}/posts")
-    public BaseResponse<?> getAllPosts(@PathVariable Long boardId) {
-        return BaseResponse.success(postService.getPostsByBoardId(boardId));
+    public BaseResponse<?> getAllPosts(@PathVariable Long boardId, Long userId) {
+        return BaseResponse.success(postService.getPostsByBoardId(boardId, userId));
     }
 
     @GetMapping("/posts/{postId}")
