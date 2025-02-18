@@ -46,6 +46,9 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Page<PostSummaryResponse> getPostsByBoardId(Long boardId, Long userId, Pageable pageable) {
+        if(!postJpaRepository.existsById(boardId)){
+            throw new EntityNotFoundException("해당 게시판이 존재하지 않습니다.");
+        }
         return postJpaRepository.findPostSummaryList(boardId, userId, pageable);
     }
 

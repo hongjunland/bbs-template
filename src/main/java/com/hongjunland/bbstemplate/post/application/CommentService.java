@@ -1,6 +1,8 @@
 package com.hongjunland.bbstemplate.post.application;
 
+import com.hongjunland.bbstemplate.common.response.CursorPage;
 import com.hongjunland.bbstemplate.post.domain.CommentLike;
+import com.hongjunland.bbstemplate.post.dto.ReplyCommentListResponse;
 import com.hongjunland.bbstemplate.post.dto.RootCommentListResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentLikeJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
@@ -19,6 +21,7 @@ import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -82,24 +85,10 @@ public class CommentService {
      * 특정 댓글의 대댓글(답글) 조회
      */
     @Transactional(readOnly = true)
-    public List<CommentResponse> getReplies(Long commentId) {
-        Comment parent = commentJpaRepository.findById(commentId)
+    public CursorPage<ReplyCommentListResponse> getReplies(Long commentId, Long userId, LocalDateTime cursor, int limit) {
+        commentJpaRepository.findById(commentId)
                 .orElseThrow(() -> new EntityNotFoundException("댓글이 존재하지 않습니다."));
-
-        return commentJpaRepository.findByParent(parent)
-                .stream()
-                .map(reply -> CommentResponse.builder()
-                        .id(reply.getId())
-                        .postId(reply.getPost().getId())
-                        .parentId(parent.getId())
-                        .author(reply.getAuthor())
-                        .content(reply.getContent())
-                        .replyCount(commentJpaRepository.countByParentId(reply.getId()))
-                        .likeCount(commentLikeJpaRepository.countByCommentId(reply.getId()))
-                        .createdAt(reply.getCreatedAt())
-                        .updatedAt(reply.getUpdatedAt())
-                        .build())
-                .toList();
+        return commentJpaRepository.findReplyListByParentCommentId(commentId, userId, cursor, limit);
     }
 
     /**

@@ -52,9 +52,6 @@ public class PostController {
         return BaseResponse.success(null);
     }
 
-    /**
-     * ✅ 게시글 좋아요/취소 (토글)
-     */
     @PostMapping("/posts/{postId}/like")
     public BaseResponse<String> toggleLike(@PathVariable Long postId, @RequestParam Long userId) {
         boolean liked = postService.togglePostLike(postId, userId);

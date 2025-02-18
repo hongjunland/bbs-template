@@ -6,8 +6,10 @@ import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -19,7 +21,7 @@ public class CommentController {
      * ✅ 게시글의 루트 댓글 조회
      */
     @GetMapping("/posts/{postId}/comments")
-    public BaseResponse<?> getCommentsByPostId(@PathVariable Long postId, Long userId, Pageable pageable) {
+    public BaseResponse<?> getCommentsByPostId(@PathVariable Long postId, @RequestParam(required = false)Long userId, Pageable pageable) {
         return BaseResponse.success(commentService.getCommentsByPostId(postId, userId, pageable));
     }
 
@@ -27,8 +29,11 @@ public class CommentController {
      * ✅ 특정 댓글의 대댓글 조회
      */
     @GetMapping("/comments/{commentId}/replies")
-    public BaseResponse<List<CommentResponse>> getReplies(@PathVariable Long commentId) {
-        return BaseResponse.success(commentService.getReplies(commentId));
+    public BaseResponse<?> getReplies(@PathVariable Long commentId,
+                                      @RequestParam(required = false) Long userId,
+                                      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
+                                      @RequestParam(defaultValue = "5") int limit) {
+        return BaseResponse.success(commentService.getReplies(commentId, userId, cursor, limit));
     }
 
     /**
