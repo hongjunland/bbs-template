@@ -1,7 +1,7 @@
 package com.hongjunland.bbstemplate.post.application;
 
 import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.post.CommentJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.post.domain.PostLike;
 import com.hongjunland.bbstemplate.post.infrastructure.PostLikeJpaRepository;
@@ -18,9 +18,7 @@ import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
 import com.hongjunland.bbstemplate.post.dto.PostRequest;
 import com.hongjunland.bbstemplate.post.dto.PostResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.post.PostJpaRepository;
-
-import java.util.List;
+import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
 
 @Service
 @RequiredArgsConstructor

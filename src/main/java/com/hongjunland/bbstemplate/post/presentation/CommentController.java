@@ -5,6 +5,7 @@ import com.hongjunland.bbstemplate.post.dto.CommentRequest;
 import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class CommentController {
      * ✅ 게시글의 루트 댓글 조회
      */
     @GetMapping("/posts/{postId}/comments")
-    public BaseResponse<List<CommentResponse>> getCommentsByPostId(@PathVariable Long postId) {
-        return BaseResponse.success(commentService.getCommentsByPostId(postId));
+    public BaseResponse<?> getCommentsByPostId(@PathVariable Long postId, Long userId, Pageable pageable) {
+        return BaseResponse.success(commentService.getCommentsByPostId(postId, userId, pageable));
     }
 
     /**

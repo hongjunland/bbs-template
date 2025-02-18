@@ -1,20 +1,23 @@
 package com.hongjunland.bbstemplate.post.application;
 
 import com.hongjunland.bbstemplate.post.domain.CommentLike;
+import com.hongjunland.bbstemplate.post.dto.RootCommentListResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentLikeJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.user.domain.User;
 import com.hongjunland.bbstemplate.user.infrastructure.UserJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hongjunland.bbstemplate.post.domain.Comment;
 import com.hongjunland.bbstemplate.post.dto.CommentRequest;
 import com.hongjunland.bbstemplate.post.dto.CommentResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.post.CommentJpaRepository;
-import com.hongjunland.bbstemplate.post.infrastructure.post.PostJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
 
 import java.util.List;
 
@@ -26,7 +29,6 @@ public class CommentService {
     private final PostJpaRepository postJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final CommentLikeJpaRepository commentLikeJpaRepository;
-
     /**
      * 댓글(또는 대댓글) 생성
      */
@@ -57,15 +59,11 @@ public class CommentService {
      * 특정 게시글의 루트 댓글 목록 조회
      */
     @Transactional(readOnly = true)
-    public List<CommentResponse> getCommentsByPostId(Long postId) {
+    public Page<RootCommentListResponse> getCommentsByPostId(Long postId, Long userId, Pageable pageable) {
         if (!postJpaRepository.existsById(postId)) {
             throw new EntityNotFoundException("게시글이 존재하지 않습니다.");
         }
-
-        return commentJpaRepository.findByPostIdAndParentIsNull(postId)
-                .stream()
-                .map(this::toCommentResponse)
-                .toList();
+        return commentJpaRepository.findRootCommentsByPostId(postId, userId, pageable);
     }
 
     /**

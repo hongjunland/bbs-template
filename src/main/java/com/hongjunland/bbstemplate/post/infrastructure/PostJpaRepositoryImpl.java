@@ -1,13 +1,11 @@
-package com.hongjunland.bbstemplate.post.infrastructure.post;
+package com.hongjunland.bbstemplate.post.infrastructure;
 
 import com.hongjunland.bbstemplate.board.domain.QBoard;
 import com.hongjunland.bbstemplate.post.domain.QComment;
 import com.hongjunland.bbstemplate.post.domain.QPost;
 import com.hongjunland.bbstemplate.post.domain.QPostLike;
 import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;

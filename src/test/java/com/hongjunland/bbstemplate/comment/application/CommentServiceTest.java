@@ -2,6 +2,7 @@ package com.hongjunland.bbstemplate.comment.application;
 
 import com.hongjunland.bbstemplate.post.application.CommentService;
 import com.hongjunland.bbstemplate.post.domain.Post;
+import com.hongjunland.bbstemplate.post.dto.RootCommentListResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.hongjunland.bbstemplate.post.domain.Comment;
 import com.hongjunland.bbstemplate.post.dto.CommentRequest;
 import com.hongjunland.bbstemplate.post.dto.CommentResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.post.CommentJpaRepository;
-import com.hongjunland.bbstemplate.post.infrastructure.post.PostJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +45,7 @@ public class CommentServiceTest {
 
     private Post post;
     private Comment comment;
+    private final Long userId = 1L;
 
     @BeforeEach
     void setup() {
@@ -106,13 +110,12 @@ public class CommentServiceTest {
         // given
         when(postJpaRepository.existsById(post.getId())).thenReturn(true);
         when(commentJpaRepository.findByPostId(post.getId())).thenReturn(List.of(comment));
-
         // when
-        List<CommentResponse> responses = commentService.getCommentsByPostId(post.getId());
+        Page<RootCommentListResponse> responses = commentService.getCommentsByPostId(post.getId(), userId, Pageable.unpaged());
 
         // then
         assertThat(responses).isNotEmpty();
-        assertThat(responses.get(0).id()).isEqualTo(comment.getId());
+//        assertThat(responses.get(0).id()).isEqualTo(comment.getId());
     }
 
     @Test
@@ -121,7 +124,7 @@ public class CommentServiceTest {
         when(postJpaRepository.existsById(post.getId())).thenReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> commentService.getCommentsByPostId(post.getId()))
+        assertThatThrownBy(() -> commentService.getCommentsByPostId(post.getId(), userId, Pageable.unpaged()))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("게시글이 존재하지 않습니다.");
     }

@@ -1,4 +1,4 @@
-package com.hongjunland.bbstemplate.post.infrastructure.post;
+package com.hongjunland.bbstemplate.post.infrastructure;
 
 import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import org.springframework.data.domain.Page;

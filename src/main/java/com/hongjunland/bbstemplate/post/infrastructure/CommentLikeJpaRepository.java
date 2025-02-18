@@ -10,8 +10,6 @@ import java.util.Optional;
 public interface CommentLikeJpaRepository extends JpaRepository<CommentLike, Long> {
     int countByCommentId(Long commentId);  // ✅ 좋아요 개수 조회
 
-    Optional<CommentLike> findByCommentAndUser(Comment comment, User user);
-
     boolean existsByCommentAndUser(Comment comment, User user);
 
     void deleteCommentLikeByCommentIdAndUserId(Long commentId, Long userId);

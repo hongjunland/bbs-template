@@ -14,7 +14,7 @@ import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
 import com.hongjunland.bbstemplate.post.dto.PostRequest;
 import com.hongjunland.bbstemplate.post.dto.PostResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.post.PostJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

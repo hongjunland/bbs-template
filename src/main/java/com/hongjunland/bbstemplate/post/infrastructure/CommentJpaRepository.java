@@ -1,4 +1,4 @@
-package com.hongjunland.bbstemplate.post.infrastructure.post;
+package com.hongjunland.bbstemplate.post.infrastructure;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -6,7 +6,7 @@ import com.hongjunland.bbstemplate.post.domain.Comment;
 
 import java.util.List;
 
-public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
+public interface CommentJpaRepository extends JpaRepository<Comment, Long>, CommentJpaRepositoryCustom {
     List<Comment> findByPostId(Long postId);
 
     List<Comment> findByPostIdAndParentIsNull(Long postId);
