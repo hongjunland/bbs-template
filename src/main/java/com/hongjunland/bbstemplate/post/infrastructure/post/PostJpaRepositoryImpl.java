@@ -13,9 +13,14 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +29,7 @@ public class PostJpaRepositoryImpl implements PostJpaRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<PostSummaryResponse> findPostSummaryList(Long boardId, Long userId) {
+    public Page<PostSummaryResponse> findPostSummaryList(Long boardId, Long userId, Pageable pageable) {
         QPost post = QPost.post;
         QBoard board = QBoard.board;
         QPostLike postLike = QPostLike.postLike;
@@ -42,7 +47,7 @@ public class PostJpaRepositoryImpl implements PostJpaRepositoryCustom {
                 .select(comment.id.countDistinct())
                 .from(comment)
                 .where(comment.post.eq(post));
-        return queryFactory
+        List<PostSummaryResponse> content = queryFactory
                 .select(Projections.constructor(
                         PostSummaryResponse.class,
                         post.id,                              // Long id
@@ -60,7 +65,19 @@ public class PostJpaRepositoryImpl implements PostJpaRepositoryCustom {
                 .leftJoin(postLike).on(postLike.post.eq(post))
                 .where(board.id.eq(boardId))
                 .groupBy(post.id, post.board.id, post.title, post.content)
+                .orderBy(post.createdAt.desc()) // 최신순 정렬
+                .offset(pageable.getOffset()) // Offset 적용
+                .limit(pageable.getPageSize()) // 페이지 크기 적용
                 .fetch();
+        long totalCount = Optional.ofNullable(
+                queryFactory
+                        .select(post.count())
+                        .from(post)
+                        .where(post.board.id.eq(boardId))
+                        .fetchOne()
+        ).orElse(0L);
+
+        return new PageImpl<>(content, pageable, totalCount);
     }
 
 }

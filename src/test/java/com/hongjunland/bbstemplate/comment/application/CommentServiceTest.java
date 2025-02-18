@@ -14,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.hongjunland.bbstemplate.post.domain.Comment;
 import com.hongjunland.bbstemplate.post.dto.CommentRequest;
 import com.hongjunland.bbstemplate.post.dto.CommentResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.post.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.post.PostJpaRepository;
 
 import java.util.List;

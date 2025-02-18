@@ -1,7 +1,7 @@
 package com.hongjunland.bbstemplate.post.application;
 
 import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
-import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
+import com.hongjunland.bbstemplate.post.infrastructure.post.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.post.domain.PostLike;
 import com.hongjunland.bbstemplate.post.infrastructure.PostLikeJpaRepository;
@@ -9,6 +9,8 @@ import com.hongjunland.bbstemplate.user.domain.User;
 import com.hongjunland.bbstemplate.user.infrastructure.UserJpaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,8 +47,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostSummaryResponse> getPostsByBoardId(Long boardId, Long userId) {
-        return postJpaRepository.findPostSummaryList(boardId, userId);
+    public Page<PostSummaryResponse> getPostsByBoardId(Long boardId, Long userId, Pageable pageable) {
+        return postJpaRepository.findPostSummaryList(boardId, userId, pageable);
     }
 
     @Transactional(readOnly = true)

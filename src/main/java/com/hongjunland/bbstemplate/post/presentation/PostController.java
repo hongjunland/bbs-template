@@ -3,6 +3,7 @@ package com.hongjunland.bbstemplate.post.presentation;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,8 +27,8 @@ public class PostController {
     }
 
     @GetMapping("/boards/{boardId}/posts")
-    public BaseResponse<?> getAllPosts(@PathVariable Long boardId, Long userId) {
-        return BaseResponse.success(postService.getPostsByBoardId(boardId, userId));
+    public BaseResponse<?> getPostSummaryListByBoardId(@PathVariable Long boardId, Long userId, Pageable pageable) {
+        return BaseResponse.success(postService.getPostsByBoardId(boardId, userId, pageable));
     }
 
     @GetMapping("/posts/{postId}")

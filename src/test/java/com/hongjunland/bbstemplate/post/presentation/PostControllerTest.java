@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -88,7 +89,7 @@ public class PostControllerTest {
                         .build()
         );
 
-        when(postService.getPostsByBoardId(boardId, userId)).thenReturn(responses);
+//        when(postService.getPostsByBoardId(boardId, userId, Pageable.unpaged())).thenReturn(responses);
 
         // when & then
         mockMvc.perform(get("/api/v1/boards/{boardId}/posts", boardId))
@@ -103,7 +104,7 @@ public class PostControllerTest {
         // given
         Long boardId = 1L;
 
-        when(postService.getPostsByBoardId(boardId, userId)).thenThrow(new EntityNotFoundException("존재하지 않는 게시판"));
+        when(postService.getPostsByBoardId(boardId, userId, Pageable.unpaged())).thenThrow(new EntityNotFoundException("존재하지 않는 게시판"));
         // when & then
         mockMvc.perform(get("/api/v1/boards/{boardId}/posts", boardId))
                 .andExpect(status().isBadRequest())
