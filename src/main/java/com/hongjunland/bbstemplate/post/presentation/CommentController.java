@@ -33,6 +33,9 @@ public class CommentController {
                                       @RequestParam(required = false) Long userId,
                                       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
                                       @RequestParam(defaultValue = "5") int limit) {
+        if(cursor == null){
+            cursor = LocalDateTime.now();
+        }
         return BaseResponse.success(commentService.getReplies(commentId, userId, cursor, limit));
     }
 
@@ -40,10 +43,20 @@ public class CommentController {
      * ✅ 댓글 생성
      */
     @PostMapping("/posts/{postId}/comments")
-    public BaseResponse<CommentResponse> createComment(
+    public BaseResponse<?> createComment(
             @PathVariable Long postId,
             @RequestBody CommentRequest request) {
         return BaseResponse.success(commentService.createComment(postId, request));
+    }
+
+    /**
+     * ✅ 대댓글 생성
+     */
+    @PostMapping("/comments/{commentId}/replies")
+    public BaseResponse<?> createReply(
+            @PathVariable Long commentId,
+            @RequestBody CommentRequest request) {
+        return BaseResponse.success(commentService.createReply(commentId, request));
     }
 
     /**

@@ -36,26 +36,36 @@ public class CommentService {
      * 댓글(또는 대댓글) 생성
      */
     @Transactional
-    public CommentResponse createComment(Long postId, CommentRequest request) {
+    public Long createComment(Long postId, CommentRequest request) {
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
-
-        // 부모 댓글이 존재하면 대댓글, 아니면 일반 댓글 생성
-        Comment parent = null;
-        if (request.parentId() != null) {
-            parent = commentJpaRepository.findById(request.parentId())
-                    .orElseThrow(() -> new EntityNotFoundException("부모 댓글이 존재하지 않습니다."));
-        }
-
         Comment comment = Comment.builder()
                 .post(post)
-                .parent(parent)
+                .parent(null)
                 .author(request.author())
                 .content(request.content())
                 .build();
         post.addComment(comment);
         commentJpaRepository.save(comment);
-        return toCommentResponse(comment);
+        return comment.getId();
+    }
+    /**
+     * 대댓글 생성
+     */
+    @Transactional
+    public Object createReply(Long commentId, CommentRequest request) {
+        // 부모 댓글이 존재하면 대댓글, 아니면 일반 댓글 생성
+        Comment parent = commentJpaRepository.findById(commentId)
+                    .orElseThrow(() -> new EntityNotFoundException("부모 댓글이 존재하지 않습니다."));
+        Comment comment = Comment.builder()
+                .post(parent.getPost())
+                .parent(parent)
+                .author(request.author())
+                .content(request.content())
+                .build();
+        parent.getPost().addComment(comment);
+        commentJpaRepository.save(comment);
+        return comment.getId();
     }
 
     /**
@@ -140,5 +150,7 @@ public class CommentService {
                 .updatedAt(comment.getUpdatedAt())
                 .build();
     }
+
+
 }
 

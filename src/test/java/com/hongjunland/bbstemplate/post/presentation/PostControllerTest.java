@@ -50,26 +50,14 @@ public class PostControllerTest {
                 .author("홍길동")
                 .build();
 
-        PostResponse response = PostResponse.builder()
-                .id(1L)
-                .boardId(boardId)
-                .boardName("공지사항")
-                .title(request.title())
-                .content(request.content())
-                .author(request.author())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        when(postService.createPost(eq(boardId), any(PostRequest.class))).thenReturn(response);
+        when(postService.createPost(eq(boardId), any(PostRequest.class))).thenReturn(1L);
 
         // when & then
         mockMvc.perform(post("/api/v1/boards/{boardId}/posts", boardId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(response.id()))
-                .andExpect(jsonPath("$.data.title").value(response.title()));
+                .andExpect(jsonPath("$.data.id").value(1L));
     }
 
     @Test

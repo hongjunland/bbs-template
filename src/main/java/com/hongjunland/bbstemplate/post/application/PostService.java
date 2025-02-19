@@ -30,7 +30,7 @@ public class PostService {
     private final CommentJpaRepository commentJpaRepository;
 
     @Transactional
-    public PostResponse createPost(Long boardId, PostRequest request) {
+    public Long createPost(Long boardId, PostRequest request) {
         Board board = boardJpaRepository.findById(boardId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 게시판이 존재하지 않습니다."));
 
@@ -41,7 +41,7 @@ public class PostService {
                 .author(request.author())
                 .build()
         );
-        return toPostResponse(post);
+        return post.getId();
     }
 
     @Transactional(readOnly = true)

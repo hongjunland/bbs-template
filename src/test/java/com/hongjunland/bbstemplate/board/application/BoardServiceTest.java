@@ -45,11 +45,10 @@ public class BoardServiceTest {
                 );
 
         // when
-        BoardResponse response = boardService.createBoard(request);
+        Long response = boardService.createBoard(request);
 
         // then
-        assertNotNull(response);
-        assertEquals(request.name(), response.name());
+        assertEquals(1L, response);
     }
 
     @Test

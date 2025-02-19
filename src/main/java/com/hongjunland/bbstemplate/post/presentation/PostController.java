@@ -22,8 +22,8 @@ public class PostController {
     public BaseResponse<?> createPost(
             @PathVariable Long boardId,
             @RequestBody @Valid PostRequest request) {
-        PostResponse response = postService.createPost(boardId, request);
-        return BaseResponse.success(response);
+        Long postId = postService.createPost(boardId, request);
+        return BaseResponse.success(postId);
     }
 
     @GetMapping("/boards/{boardId}/posts")

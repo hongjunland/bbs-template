@@ -74,13 +74,10 @@ public class PostServiceTest {
         when(postJpaRepository.save(any(Post.class))).thenReturn(post);
 
         // when
-        PostResponse response = postService.createPost(1L, request);
+        Long response = postService.createPost(1L, request);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.title()).isEqualTo(request.title());
-        assertThat(response.content()).isEqualTo(request.content());
-        assertThat(response.author()).isEqualTo(request.author());
+        assertThat(response).isEqualTo(1L);
 
         verify(postJpaRepository, times(1)).save(any(Post.class));
     }

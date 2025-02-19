@@ -18,16 +18,12 @@ public class BoardService {
     private final BoardJpaRepository boardJpaRepository;
 
     @Transactional
-    public BoardResponse createBoard(BoardRequest request) {
+    public Long createBoard(BoardRequest request) {
         Board board = boardJpaRepository.save(Board.builder()
                 .name(request.name())
                 .description(request.description())
                 .build());
-        return BoardResponse.builder()
-                .boardId(board.getId())
-                .name(board.getName())
-                .description(board.getDescription())
-                .build();
+        return board.getId();
     }
 
     public BoardResponse getBoardById(Long boardId) {

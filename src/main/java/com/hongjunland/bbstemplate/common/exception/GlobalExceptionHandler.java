@@ -15,7 +15,7 @@ import com.hongjunland.bbstemplate.common.response.BaseResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public BaseResponse<?> handleEntityNotFoundException(EntityNotFoundException ex) {
         return BaseResponse.failure(ex.getMessage());
     }

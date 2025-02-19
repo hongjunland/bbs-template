@@ -79,12 +79,10 @@ public class CommentServiceTest {
         when(commentJpaRepository.save(any(Comment.class))).thenReturn(comment);
 
         // when
-        CommentResponse response = commentService.createComment(post.getId(), request);
+        Long response = commentService.createComment(post.getId(), request);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.author()).isEqualTo(request.author());
-        assertThat(response.content()).isEqualTo(request.content());
+        assertThat(response).isEqualTo(comment.getId());
     }
 
     @Test
