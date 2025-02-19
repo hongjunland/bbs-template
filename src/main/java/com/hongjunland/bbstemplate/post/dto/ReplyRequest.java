@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-public record CommentRequest(
+public record ReplyRequest(
         @NotBlank String author,
         @NotBlank String content) {
 }

@@ -4,6 +4,7 @@ import com.hongjunland.bbstemplate.post.application.CommentService;
 import com.hongjunland.bbstemplate.post.dto.CommentRequest;
 import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.common.response.BaseResponse;
+import com.hongjunland.bbstemplate.post.dto.ReplyRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -55,7 +56,7 @@ public class CommentController {
     @PostMapping("/comments/{commentId}/replies")
     public BaseResponse<?> createReply(
             @PathVariable Long commentId,
-            @RequestBody CommentRequest request) {
+            @RequestBody ReplyRequest request) {
         return BaseResponse.success(commentService.createReply(commentId, request));
     }
 

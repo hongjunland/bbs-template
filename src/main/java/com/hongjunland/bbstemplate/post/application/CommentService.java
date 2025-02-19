@@ -2,8 +2,7 @@ package com.hongjunland.bbstemplate.post.application;
 
 import com.hongjunland.bbstemplate.common.response.CursorPage;
 import com.hongjunland.bbstemplate.post.domain.CommentLike;
-import com.hongjunland.bbstemplate.post.dto.ReplyCommentListResponse;
-import com.hongjunland.bbstemplate.post.dto.RootCommentListResponse;
+import com.hongjunland.bbstemplate.post.dto.*;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentLikeJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.user.domain.User;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hongjunland.bbstemplate.post.domain.Comment;
-import com.hongjunland.bbstemplate.post.dto.CommentRequest;
-import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
 
@@ -36,7 +33,7 @@ public class CommentService {
      * 댓글(또는 대댓글) 생성
      */
     @Transactional
-    public Long createComment(Long postId, CommentRequest request) {
+    public long createComment(Long postId, CommentRequest request) {
         Post post = postJpaRepository.findById(postId)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         Comment comment = Comment.builder()
@@ -53,7 +50,7 @@ public class CommentService {
      * 대댓글 생성
      */
     @Transactional
-    public Object createReply(Long commentId, CommentRequest request) {
+    public long createReply(Long commentId, ReplyRequest request) {
         // 부모 댓글이 존재하면 대댓글, 아니면 일반 댓글 생성
         Comment parent = commentJpaRepository.findById(commentId)
                     .orElseThrow(() -> new EntityNotFoundException("부모 댓글이 존재하지 않습니다."));

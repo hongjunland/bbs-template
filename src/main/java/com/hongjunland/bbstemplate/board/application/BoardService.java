@@ -18,7 +18,7 @@ public class BoardService {
     private final BoardJpaRepository boardJpaRepository;
 
     @Transactional
-    public Long createBoard(BoardRequest request) {
+    public long createBoard(BoardRequest request) {
         Board board = boardJpaRepository.save(Board.builder()
                 .name(request.name())
                 .description(request.description())
