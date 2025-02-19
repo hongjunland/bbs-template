@@ -5,19 +5,16 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record PostResponse(
+public record PostSummaryResponse(
         Long id,
         Long boardId,
-        String boardName,
         String title,
-        String content,
         String author,
+        String contentSnippet,
         long likeCount,
-        long commentCount,
-
         boolean isLiked,
-        LocalDateTime createdAt,
+        long commentCount,
         LocalDateTime updatedAt
-) {
 
+) {
 }

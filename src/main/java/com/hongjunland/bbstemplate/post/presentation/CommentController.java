@@ -1,12 +1,16 @@
-package com.hongjunland.bbstemplate.comment.presentation;
+package com.hongjunland.bbstemplate.post.presentation;
 
-import com.hongjunland.bbstemplate.comment.application.CommentService;
-import com.hongjunland.bbstemplate.comment.dto.CommentRequest;
-import com.hongjunland.bbstemplate.comment.dto.CommentResponse;
+import com.hongjunland.bbstemplate.post.application.CommentService;
+import com.hongjunland.bbstemplate.post.dto.CommentRequest;
+import com.hongjunland.bbstemplate.post.dto.CommentResponse;
 import com.hongjunland.bbstemplate.common.response.BaseResponse;
+import com.hongjunland.bbstemplate.post.dto.ReplyRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -18,26 +22,42 @@ public class CommentController {
      * ✅ 게시글의 루트 댓글 조회
      */
     @GetMapping("/posts/{postId}/comments")
-    public BaseResponse<List<CommentResponse>> getCommentsByPostId(@PathVariable Long postId) {
-        return BaseResponse.success(commentService.getCommentsByPostId(postId));
+    public BaseResponse<?> getCommentsByPostId(@PathVariable Long postId, @RequestParam(required = false)Long userId, Pageable pageable) {
+        return BaseResponse.success(commentService.getCommentsByPostId(postId, userId, pageable));
     }
 
     /**
      * ✅ 특정 댓글의 대댓글 조회
      */
     @GetMapping("/comments/{commentId}/replies")
-    public BaseResponse<List<CommentResponse>> getReplies(@PathVariable Long commentId) {
-        return BaseResponse.success(commentService.getReplies(commentId));
+    public BaseResponse<?> getReplies(@PathVariable Long commentId,
+                                      @RequestParam(required = false) Long userId,
+                                      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
+                                      @RequestParam(defaultValue = "5") int limit) {
+        if(cursor == null){
+            cursor = LocalDateTime.now();
+        }
+        return BaseResponse.success(commentService.getReplies(commentId, userId, cursor, limit));
     }
 
     /**
      * ✅ 댓글 생성
      */
     @PostMapping("/posts/{postId}/comments")
-    public BaseResponse<CommentResponse> createComment(
+    public BaseResponse<?> createComment(
             @PathVariable Long postId,
             @RequestBody CommentRequest request) {
         return BaseResponse.success(commentService.createComment(postId, request));
+    }
+
+    /**
+     * ✅ 대댓글 생성
+     */
+    @PostMapping("/comments/{commentId}/replies")
+    public BaseResponse<?> createReply(
+            @PathVariable Long commentId,
+            @RequestBody ReplyRequest request) {
+        return BaseResponse.success(commentService.createReply(commentId, request));
     }
 
     /**

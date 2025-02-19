@@ -38,3 +38,7 @@ out/
 
 ## Environment ##
 application-*.yml
+.env*
+## Logging ##
+*.log
+

@@ -1,7 +1,6 @@
 package com.hongjunland.bbstemplate.user.domain;
 
 import com.hongjunland.bbstemplate.common.domain.BaseTimeEntity;
-import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @Table(name = "users")
-public class UserJpaEntity extends BaseTimeEntity {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

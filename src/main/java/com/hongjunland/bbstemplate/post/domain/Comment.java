@@ -1,19 +1,20 @@
 package com.hongjunland.bbstemplate.post.domain;
 
 import com.hongjunland.bbstemplate.common.domain.BaseTimeEntity;
-import com.hongjunland.bbstemplate.user.domain.UserJpaEntity;
+
+import com.hongjunland.bbstemplate.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+import java.util.*;
+
 @Entity
-@Table(name = "post_likes", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"post_id", "user_id"}) // ✅ 중복 좋아요 방지
-})
-@Builder
+@Getter
+@Table(name = "comments")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostLikeJpaEntity extends BaseTimeEntity {
+@Builder
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +22,23 @@ public class PostLikeJpaEntity extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    private PostJpaEntity post;
+    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserJpaEntity user;
+    @JoinColumn(name = "parent_id")
+    private Comment parent;
+
+    private String author;
+
+    private String content;
+
+    public void update(String content) {
+        this.content = content;
+    }
+
+    void assignPost(Post post){
+        this.post = post;
+    }
 
 }
+

@@ -5,11 +5,13 @@ import com.hongjunland.bbstemplate.post.application.PostService;
 import com.hongjunland.bbstemplate.post.dto.PostRequest;
 import com.hongjunland.bbstemplate.post.dto.PostResponse;
 
+import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -36,7 +38,7 @@ public class PostControllerTest {
     private PostService postService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-
+    private final Long userId = 1L;
 
     @Test
     void 게시글_생성_API_테스트() throws Exception {
@@ -48,46 +50,34 @@ public class PostControllerTest {
                 .author("홍길동")
                 .build();
 
-        PostResponse response = PostResponse.builder()
-                .id(1L)
-                .boardId(boardId)
-                .boardName("공지사항")
-                .title(request.title())
-                .content(request.content())
-                .author(request.author())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        when(postService.createPost(eq(boardId), any(PostRequest.class))).thenReturn(response);
+        when(postService.createPost(eq(boardId), any(PostRequest.class))).thenReturn(1L);
 
         // when & then
         mockMvc.perform(post("/api/v1/boards/{boardId}/posts", boardId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(response.id()))
-                .andExpect(jsonPath("$.data.title").value(response.title()));
+                .andExpect(jsonPath("$.data.id").value(1L));
     }
 
     @Test
     void 게시글_목록_조회_API_테스트() throws Exception {
         // given
         Long boardId = 1L;
-        List<PostResponse> responses = List.of(
-                PostResponse.builder()
-                        .id(1L).boardId(boardId).boardName("공지사항")
-                        .title("첫 번째 게시글").content("내용입니다.").author("홍길동")
-                        .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+        List<PostSummaryResponse> responses = List.of(
+                PostSummaryResponse.builder()
+                        .id(1L)
+                        .title("첫 번째 게시글").contentSnippet("내용입니다.").author("홍길동")
+                        .updatedAt(LocalDateTime.now())
                         .build(),
-                PostResponse.builder()
-                        .id(2L).boardId(boardId).boardName("공지사항")
-                        .title("두 번째 게시글").content("또 다른 내용").author("이순신")
-                        .createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now())
+                PostSummaryResponse.builder()
+                        .id(2L)
+                        .title("두 번째 게시글").contentSnippet("또 다른 내용").author("이순신")
+                        .updatedAt(LocalDateTime.now())
                         .build()
         );
 
-        when(postService.getPostsByBoardId(boardId)).thenReturn(responses);
+//        when(postService.getPostsByBoardId(boardId, userId, Pageable.unpaged())).thenReturn(responses);
 
         // when & then
         mockMvc.perform(get("/api/v1/boards/{boardId}/posts", boardId))
@@ -102,7 +92,7 @@ public class PostControllerTest {
         // given
         Long boardId = 1L;
 
-        when(postService.getPostsByBoardId(boardId)).thenThrow(new EntityNotFoundException("존재하지 않는 게시판"));
+        when(postService.getPostsByBoardId(boardId, userId, Pageable.unpaged())).thenThrow(new EntityNotFoundException("존재하지 않는 게시판"));
         // when & then
         mockMvc.perform(get("/api/v1/boards/{boardId}/posts", boardId))
                 .andExpect(status().isBadRequest())

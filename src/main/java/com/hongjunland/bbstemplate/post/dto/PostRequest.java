@@ -1,10 +1,11 @@
 package com.hongjunland.bbstemplate.post.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 @Builder
-public record PostRequest(Long boardId,
-                          String title,
-                          String content,
-                          String author) {
+public record PostRequest(@NotBlank Long boardId,
+                          @NotBlank String title,
+                          @NotBlank String content,
+                          @NotBlank String author) {
 }

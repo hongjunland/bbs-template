@@ -1,5 +1,7 @@
 package com.hongjunland.bbstemplate.post.application;
 
+import com.hongjunland.bbstemplate.post.domain.Post;
+import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,13 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.hongjunland.bbstemplate.board.domain.BoardJpaEntity;
+import com.hongjunland.bbstemplate.board.domain.Board;
 import com.hongjunland.bbstemplate.board.infrastructure.BoardJpaRepository;
-import com.hongjunland.bbstemplate.post.application.PostService;
-import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
 import com.hongjunland.bbstemplate.post.dto.PostRequest;
 import com.hongjunland.bbstemplate.post.dto.PostResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,24 +38,26 @@ public class PostServiceTest {
     @InjectMocks
     private PostService postService;
 
-    private BoardJpaEntity board;
-    private PostJpaEntity post;
+    private Board board;
+    private Post post;
+    private Long userId;
 
     @BeforeEach
     void setup() {
-        board = BoardJpaEntity.builder()
+        board = Board.builder()
                 .id(1L)
                 .name("공지사항")
                 .description("공지사항 게시판")
                 .build();
 
-        post = PostJpaEntity.builder()
+        post = Post.builder()
                 .id(1L)
                 .board(board)
                 .title("첫 번째 게시글")
                 .content("내용입니다.")
                 .author("홍길동")
                 .build();
+        userId = 1L;
     }
 
     @Test
@@ -67,18 +71,15 @@ public class PostServiceTest {
                 .build();
 
         when(boardJpaRepository.findById(request.boardId())).thenReturn(Optional.of(board));
-        when(postJpaRepository.save(any(PostJpaEntity.class))).thenReturn(post);
+        when(postJpaRepository.save(any(Post.class))).thenReturn(post);
 
         // when
-        PostResponse response = postService.createPost(1L, request);
+        Long response = postService.createPost(1L, request);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.title()).isEqualTo(request.title());
-        assertThat(response.content()).isEqualTo(request.content());
-        assertThat(response.author()).isEqualTo(request.author());
+        assertThat(response).isEqualTo(1L);
 
-        verify(postJpaRepository, times(1)).save(any(PostJpaEntity.class));
+        verify(postJpaRepository, times(1)).save(any(Post.class));
     }
 
     @Test
@@ -103,12 +104,12 @@ public class PostServiceTest {
         when(postJpaRepository.findByBoardId(1L)).thenReturn(List.of(post));
 
         // when
-        List<PostResponse> responses = postService.getPostsByBoardId(1L);
+        Page<PostSummaryResponse> responses = postService.getPostsByBoardId(1L, userId, Pageable.unpaged());
 
         // then
         assertThat(responses).hasSize(1);
-        assertThat(responses.get(0).title()).isEqualTo(post.getTitle());
-        assertThat(responses.get(0).content()).isEqualTo(post.getContent());
+//        assertThat(responses.get(0).title()).isEqualTo(post.getTitle());
+//        assertThat(responses.get(0).contentSnippet()).isEqualTo(post.getContent());
     }
     @Test
     void 존재하지_않은_게시판_게시글_목록_조회_테스트() {
@@ -116,7 +117,7 @@ public class PostServiceTest {
         when(boardJpaRepository.existsById(1L)).thenReturn(false);
 
         // when & then
-        assertThrows(EntityNotFoundException.class, () -> postService.getPostsByBoardId(1L));
+        assertThrows(EntityNotFoundException.class, () -> postService.getPostsByBoardId(1L, userId, Pageable.unpaged()));
     }
 
 

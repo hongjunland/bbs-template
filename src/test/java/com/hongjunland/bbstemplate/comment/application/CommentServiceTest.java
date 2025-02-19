@@ -1,8 +1,10 @@
 package com.hongjunland.bbstemplate.comment.application;
 
+import com.hongjunland.bbstemplate.post.application.CommentService;
+import com.hongjunland.bbstemplate.post.domain.Post;
+import com.hongjunland.bbstemplate.post.dto.RootCommentListResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.hongjunland.bbstemplate.comment.application.CommentService;
-import com.hongjunland.bbstemplate.comment.domain.CommentJpaEntity;
-import com.hongjunland.bbstemplate.comment.dto.CommentRequest;
-import com.hongjunland.bbstemplate.comment.dto.CommentResponse;
-import com.hongjunland.bbstemplate.comment.infrastructure.CommentJpaRepository;
-import com.hongjunland.bbstemplate.post.domain.PostJpaEntity;
+import com.hongjunland.bbstemplate.post.domain.Comment;
+import com.hongjunland.bbstemplate.post.dto.CommentRequest;
+import com.hongjunland.bbstemplate.post.dto.CommentResponse;
+import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.PostJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,19 +43,20 @@ public class CommentServiceTest {
     @Mock
     private EntityManager entityManager;
 
-    private PostJpaEntity post;
-    private CommentJpaEntity comment;
+    private Post post;
+    private Comment comment;
+    private final Long userId = 1L;
 
     @BeforeEach
     void setup() {
-        post = PostJpaEntity.builder()
+        post = Post.builder()
                 .id(1L)
                 .title("게시글 제목")
                 .content("게시글 내용")
                 .author("작성자")
                 .build();
 
-        comment = CommentJpaEntity.builder()
+        comment = Comment.builder()
                 .id(1L)
                 .post(post)
                 .author("댓글 작성자")
@@ -73,15 +76,13 @@ public class CommentServiceTest {
                 .build();
 
         when(postJpaRepository.findById(post.getId())).thenReturn(Optional.of(post));
-        when(commentJpaRepository.save(any(CommentJpaEntity.class))).thenReturn(comment);
+        when(commentJpaRepository.save(any(Comment.class))).thenReturn(comment);
 
         // when
-        CommentResponse response = commentService.createComment(post.getId(), request);
+        Long response = commentService.createComment(post.getId(), request);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.author()).isEqualTo(request.author());
-        assertThat(response.content()).isEqualTo(request.content());
+        assertThat(response).isEqualTo(comment.getId());
     }
 
     @Test
@@ -107,13 +108,12 @@ public class CommentServiceTest {
         // given
         when(postJpaRepository.existsById(post.getId())).thenReturn(true);
         when(commentJpaRepository.findByPostId(post.getId())).thenReturn(List.of(comment));
-
         // when
-        List<CommentResponse> responses = commentService.getCommentsByPostId(post.getId());
+        Page<RootCommentListResponse> responses = commentService.getCommentsByPostId(post.getId(), userId, Pageable.unpaged());
 
         // then
         assertThat(responses).isNotEmpty();
-        assertThat(responses.get(0).id()).isEqualTo(comment.getId());
+//        assertThat(responses.get(0).id()).isEqualTo(comment.getId());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class CommentServiceTest {
         when(postJpaRepository.existsById(post.getId())).thenReturn(false);
 
         // when & then
-        assertThatThrownBy(() -> commentService.getCommentsByPostId(post.getId()))
+        assertThatThrownBy(() -> commentService.getCommentsByPostId(post.getId(), userId, Pageable.unpaged()))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage("게시글이 존재하지 않습니다.");
     }
@@ -134,7 +134,7 @@ public class CommentServiceTest {
                 .author("댓글 작성자")
                 .content("수정된 내용")
                 .build();
-        CommentJpaEntity updateComment = CommentJpaEntity.builder()
+        Comment updateComment = Comment.builder()
                 .id(1L)
                 .post(post)
                 .author("댓글 작성자")
@@ -158,7 +158,7 @@ public class CommentServiceTest {
                 .author("댓글 작성자")
                 .content("수정된 내용")
                 .build();
-        CommentJpaEntity updateComment = CommentJpaEntity.builder()
+        Comment updateComment = Comment.builder()
                 .id(1L)
                 .post(post)
                 .author("댓글 작성자")

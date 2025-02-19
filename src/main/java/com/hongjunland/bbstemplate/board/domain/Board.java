@@ -1,9 +1,9 @@
 package com.hongjunland.bbstemplate.board.domain;
 
 import com.hongjunland.bbstemplate.common.domain.BaseTimeEntity;
-
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Entity
 @Table(name = "boards")
@@ -12,9 +12,9 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
-public class BoardJpaEntity extends BaseTimeEntity {
+public class Board extends BaseTimeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -27,4 +27,5 @@ public class BoardJpaEntity extends BaseTimeEntity {
         this.name = name;
         this.description = description;
     }
+
 }
