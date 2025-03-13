@@ -1,9 +1,13 @@
 package com.hongjunland.bbstemplate.post.application;
 
+import com.hongjunland.bbstemplate.file.domain.File;
+import com.hongjunland.bbstemplate.file.infrastructure.FileJpaRepository;
+import com.hongjunland.bbstemplate.post.domain.PostAttachment;
 import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.post.domain.PostLike;
+import com.hongjunland.bbstemplate.post.infrastructure.PostAttachmentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.PostLikeJpaRepository;
 import com.hongjunland.bbstemplate.user.domain.User;
 import com.hongjunland.bbstemplate.user.infrastructure.UserJpaRepository;
@@ -28,6 +32,8 @@ public class PostService {
     private final UserJpaRepository userJpaRepository;
     private final PostLikeJpaRepository postLikeJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
+    private final FileJpaRepository fileJpaRepository;
+    private final PostAttachmentJpaRepository postAttachmentJpaRepository;
 
     @Transactional
     public Long createPost(Long boardId, PostRequest request) {
@@ -41,6 +47,18 @@ public class PostService {
                 .author(request.author())
                 .build()
         );
+        if(request.attachmentFileIds() != null && !request.attachmentFileIds().isEmpty()) {
+            for (Long fileId : request.attachmentFileIds()) {
+                File file = fileJpaRepository.findById(fileId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid fileId: " + fileId));
+
+                PostAttachment attachment = PostAttachment.builder()
+                        .post(post)
+                        .file(file)
+                        .build();
+                postAttachmentJpaRepository.save(attachment);
+            }
+        }
         return post.getId();
     }
 
