@@ -3,9 +3,13 @@ package com.hongjunland.bbstemplate.post.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
+import java.util.List;
+
 @Builder
-public record PostRequest(@NotBlank Long boardId,
+public record PostRequest(Long boardId,
                           @NotBlank String title,
                           @NotBlank String content,
-                          @NotBlank String author) {
+                          @NotBlank String author,
+                          List<Long> attachmentFileIds
+) {
 }

@@ -42,3 +42,5 @@ application-*.yml
 ## Logging ##
 *.log
 
+## GCP ##
+gcs-key.json

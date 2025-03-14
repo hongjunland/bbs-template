@@ -48,7 +48,7 @@ public class PostJpaRepositoryImpl implements PostJpaRepositoryCustom {
         List<PostSummaryResponse> content = queryFactory
                 .select(Projections.constructor(
                         PostSummaryResponse.class,
-                        post.id,                              // Long id
+                        post.id.as("postId"),          // Long id
                         post.board.id,                        // Long boardId
                         post.title,                           // String title
                         post.author,                          // String author
@@ -67,6 +67,7 @@ public class PostJpaRepositoryImpl implements PostJpaRepositoryCustom {
                 .offset(pageable.getOffset()) // Offset 적용
                 .limit(pageable.getPageSize()) // 페이지 크기 적용
                 .fetch();
+
         long totalCount = Optional.ofNullable(
                 queryFactory
                         .select(post.count())

@@ -1,9 +1,13 @@
 package com.hongjunland.bbstemplate.post.application;
 
+import com.hongjunland.bbstemplate.file.domain.File;
+import com.hongjunland.bbstemplate.file.infrastructure.FileJpaRepository;
+import com.hongjunland.bbstemplate.post.domain.PostAttachment;
 import com.hongjunland.bbstemplate.post.dto.PostSummaryResponse;
 import com.hongjunland.bbstemplate.post.infrastructure.CommentJpaRepository;
 import com.hongjunland.bbstemplate.post.domain.Post;
 import com.hongjunland.bbstemplate.post.domain.PostLike;
+import com.hongjunland.bbstemplate.post.infrastructure.PostAttachmentJpaRepository;
 import com.hongjunland.bbstemplate.post.infrastructure.PostLikeJpaRepository;
 import com.hongjunland.bbstemplate.user.domain.User;
 import com.hongjunland.bbstemplate.user.infrastructure.UserJpaRepository;
@@ -28,6 +32,8 @@ public class PostService {
     private final UserJpaRepository userJpaRepository;
     private final PostLikeJpaRepository postLikeJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
+    private final FileJpaRepository fileJpaRepository;
+    private final PostAttachmentJpaRepository postAttachmentJpaRepository;
 
     @Transactional
     public Long createPost(Long boardId, PostRequest request) {
@@ -41,12 +47,24 @@ public class PostService {
                 .author(request.author())
                 .build()
         );
+        if (request.attachmentFileIds() != null && !request.attachmentFileIds().isEmpty()) {
+            for (Long fileId : request.attachmentFileIds()) {
+                File file = fileJpaRepository.findById(fileId)
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid fileId: " + fileId));
+
+                PostAttachment attachment = PostAttachment.builder()
+                        .post(post)
+                        .file(file)
+                        .build();
+                postAttachmentJpaRepository.save(attachment);
+            }
+        }
         return post.getId();
     }
 
     @Transactional(readOnly = true)
     public Page<PostSummaryResponse> getPostsByBoardId(Long boardId, Long userId, Pageable pageable) {
-        if(!postJpaRepository.existsById(boardId)){
+        if (!boardJpaRepository.existsById(boardId)) {
             throw new EntityNotFoundException("해당 게시판이 존재하지 않습니다.");
         }
         return postJpaRepository.findPostSummaryList(boardId, userId, pageable);
@@ -108,7 +126,7 @@ public class PostService {
         long likeCount = postLikeJpaRepository.countByPost(post);
         long commentCount = commentJpaRepository.countCommentByPostId(post.getId());
         return PostResponse.builder()
-                .id(post.getId())
+                .postId(post.getId())
                 .boardId(post.getBoard().getId())
                 .boardName(post.getBoard().getName())
                 .author(post.getAuthor())
@@ -116,6 +134,15 @@ public class PostService {
                 .content(post.getContent())
                 .likeCount(likeCount)
                 .commentCount(commentCount)
+                .attachments(post.getAttachments().stream().map((entity) ->
+                                PostResponse.Attachment.builder()
+                                        .attachmentId(entity.getId())
+                                        .attachmentName(entity.getFile().getOriginalFilename())
+                                        .attachmentUrl(entity.getFile().getFileUrl())
+                                        .fileType(entity.getFile().getFileType())
+                                        .build()
+                        ).toList()
+                )
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
