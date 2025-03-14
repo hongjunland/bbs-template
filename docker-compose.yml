@@ -1,5 +1,13 @@
 version: '3.8'
 services:
+  was:
+    image: bbs-template
+    container_name: was
+#    restart: always
+    ports:
+        - "8888:80" # 웹 서버의 포트를 로컬 포트와 연결 (예시)
+    volumes:
+      - ./gcs-key.json:/config/gcs-key.json
   postgres:
     image: postgres:16-alpine
     container_name: my_postgres
@@ -12,6 +20,5 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
 volumes:
   pgdata:
