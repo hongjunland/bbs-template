@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record PostSummaryResponse(
-        Long id,
+        Long postId,
         Long boardId,
         String title,
         String author,

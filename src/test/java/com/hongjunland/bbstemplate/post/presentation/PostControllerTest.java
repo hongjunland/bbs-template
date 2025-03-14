@@ -66,12 +66,12 @@ public class PostControllerTest {
         Long boardId = 1L;
         List<PostSummaryResponse> responses = List.of(
                 PostSummaryResponse.builder()
-                        .id(1L)
+                        .postId(1L)
                         .title("첫 번째 게시글").contentSnippet("내용입니다.").author("홍길동")
                         .updatedAt(LocalDateTime.now())
                         .build(),
                 PostSummaryResponse.builder()
-                        .id(2L)
+                        .postId(2L)
                         .title("두 번째 게시글").contentSnippet("또 다른 내용").author("이순신")
                         .updatedAt(LocalDateTime.now())
                         .build()
@@ -106,7 +106,7 @@ public class PostControllerTest {
         Long boardId = 1L;
         Long postId = 1L;
         PostResponse response = PostResponse.builder()
-                .id(postId)
+                .postId(postId)
                 .boardId(boardId)
                 .boardName("공지사항")
                 .title("첫 번째 게시글")
@@ -121,7 +121,7 @@ public class PostControllerTest {
         // when & then
         mockMvc.perform(get("/api/v1/posts/{postId}", postId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.id").value(response.id()))
+                .andExpect(jsonPath("$.data.id").value(response.postId()))
                 .andExpect(jsonPath("$.data.title").value(response.title()));
     }
 
@@ -149,7 +149,7 @@ public class PostControllerTest {
                 .build();
 
         PostResponse response = PostResponse.builder()
-                .id(postId)
+                .postId(postId)
                 .boardId(boardId)
                 .boardName("공지사항")
                 .title(request.title())

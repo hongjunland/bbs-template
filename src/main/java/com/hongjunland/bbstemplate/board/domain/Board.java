@@ -15,12 +15,13 @@ import lombok.*;
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "description",nullable = false)
     private String description;
 
     public void update(String name, String description){
